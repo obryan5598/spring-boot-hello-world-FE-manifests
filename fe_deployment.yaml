@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-1
+  namespace: frontend
+  annotations:
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"spring-boot-hello-world-fe-imagestream:v1.0"},"fieldPath":"spec.template.spec.containers[?(@.name==\"frontend-1\")].image"}]
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: frontend-1
+  template:
+    metadata:
+      labels:
+        deployment: frontend-1
+    spec:
+      containers:
+      - env:
+        - name: BACKEND-SERVICE-ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key: backend.service
+              name: backend-service-endpoint
+        - name: BACKEND-SERVICE-PORT
+          valueFrom:
+            configMapKeyRef:
+              key: backend.service.port
+              name: backend-service-port
+      - image: spring-boot-hello-world-fe-imagestream:v1.0
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 8
+          successThreshold: 1
+          timeoutSeconds: 2
+        name: frontend-1
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 2
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 2

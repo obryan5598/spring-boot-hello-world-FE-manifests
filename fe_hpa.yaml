@@ -1,0 +1,19 @@
+apiVersion: autoscaling/v2 
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-memory-autoscale 
+  namespace: frontend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1 
+    kind: Deployment 
+    name: frontend-1
+  minReplicas: 2
+  maxReplicas: 10 
+  metrics: 
+  - type: Resource
+    resource:
+      name: memory 
+      target:
+        type: AverageValue
+        averageValue: 1Gi

@@ -1,0 +1,14 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: spring-boot-hello-world-fe-imagestream
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: v1.0
+      from:
+        kind: DockerImage
+        name: "quay.io/obryan5598/springboot-timestamp-fe:1.0"
+      importPolicy:
+        scheduled: true

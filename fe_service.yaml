@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend-1
+    app.kubernetes.io/component: frontend-1
+    app.kubernetes.io/instance: frontend-1
+  name: frontend-1
+  namespace: frontend
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    deployment: frontend-1
+  sessionAffinity: None
+  type: ClusterIP
